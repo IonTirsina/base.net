@@ -3,3 +3,22 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+
+# Rider
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+DocumentLayout.json
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/

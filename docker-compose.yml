@@ -1,0 +1,29 @@
+services:
+    base-net-postgres-db:
+        image: postgres:latest
+        container_name: base-net-postgres-db-container
+        environment:
+            POSTGRES_USER: base-net-admin-user
+            POSTGRES_PASSWORD: base-net-admin-user-password
+            POSTGRES_DB: base-net-postgres-db
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql #specific for postgres 18
+    
+    base-net-pgadmin-web:
+        image: dpage/pgadmin4
+        container_name: base-net-pgadmin-web-container
+        environment:
+            PGADMIN_DEFAULT_EMAIL: itirsina98@gmail.com
+            PGADMIN_DEFAULT_PASSWORD: very-secure-password-yeah
+        ports:
+            - "5050:80"
+        volumes:
+            - pgadmin_data:/var/lib/pgadmin
+        depends_on:
+            - base-net-postgres-db
+
+volumes:
+    postgres_data:
+    pgadmin_data:
