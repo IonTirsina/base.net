@@ -33,7 +33,7 @@ namespace Base.DataAccess.Contexts.Users;
 public class UserWriteRepository(BaseDbContext dbContext) : IUserWriteRepository
 {
     /// <summary>
-    /// Why here? Reads used for decision-making belong to write side
+    /// "Why here?" you may ask. Reads used for decision-making belong to write side
     /// </summary>
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {

@@ -44,13 +44,14 @@ public class User
     /// Rehydrate from database to domain
     /// </summary>
     /// <returns></returns>
-    public static User Rehydrate(Guid id, string name, string email)
+    public static User Rehydrate(Guid id, string name, string email, string passwordHash)
     {
         return new User
         {
             Id = id,
             Name = name,
-            Email = Email.Create(email)
+            Email = Email.Create(email),
+            PasswordHash =  passwordHash
         };
     }
 }

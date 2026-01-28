@@ -7,6 +7,7 @@ public record UserPersistence
     public Guid Id { get; private set; }
     public string Name { get; private set; }
     public string Email { get; private set; }
+    public string PasswordHash { get; private set; }
 
     private UserPersistence() {} // EF Core requires parameterless constructor
     
@@ -15,6 +16,7 @@ public record UserPersistence
         Id = user.Id;
         Name = user.Name;
         Email = user.Email.Value;
+        PasswordHash = user.PasswordHash;
     }
 
     public User ToDomain()
@@ -22,7 +24,8 @@ public record UserPersistence
         return User.Rehydrate(
             id: Id,
             name: Name,
-            email: Email
+            email: Email,
+            passwordHash: PasswordHash
         );
     }
 }
