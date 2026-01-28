@@ -1,4 +1,5 @@
-﻿using Base.Application.Repositories.Users;
+﻿using Base.Application.Repositories;
+using Base.Application.Repositories.Users;
 using Base.DataAccess.Contexts;
 using Base.DataAccess.Contexts.Users;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ namespace Base.DataAccess;
 
 public static class DataAccessDependencyInjection
 {
-    public static IServiceCollection RegisterPostgresDatabase(this IServiceCollection services, string connectionString)
+    public static void ConfigureDataAccessDependencies(this IServiceCollection services, string connectionString)
     {
         if (String.IsNullOrWhiteSpace(connectionString))
             throw new ArgumentException("Connection string cannot be empty");
@@ -16,7 +17,6 @@ public static class DataAccessDependencyInjection
         services.AddDbContext<BaseDbContext>(options => options.UseNpgsql(connectionString));
 
         services.AddScoped<IUserWriteRepository, UserWriteRepository>();
-
-        return services;
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }

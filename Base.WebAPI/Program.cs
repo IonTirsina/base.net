@@ -1,3 +1,4 @@
+using Base.Application;
 using Base.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,14 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.RegisterPostgresDatabase(builder.Configuration.GetConnectionString("DefaultConnection"));
+#region Data Access DI
+builder.Services.ConfigureDataAccessDependencies(builder.Configuration.GetConnectionString("DefaultConnection"));
+#endregion
+
+#region Application DI
+
+builder.Services.ConfigureApplicationDependencies();
+#endregion
 
 var app = builder.Build();
 

@@ -8,16 +8,19 @@ public class User
 
     public string Name { get; private set; }
     public Email Email { get; private set; }
+    public string PasswordHash { get; private set; }
     
-    private User(string name, Email email)
+    private User(string name, Email email,  string passwordHash)
     {
         Name = name;
         Email = email;
+        PasswordHash = passwordHash;
     }
 
     public static User Create(
         string name,
-        Email email)
+        Email email,
+        string password)
     {
         if (String.IsNullOrWhiteSpace(name))
             throw new ArgumentException("User name cannot be empty");
@@ -27,12 +30,20 @@ public class User
             throw new ArgumentException("Invalid user email");
         }
         
-        return new User(name, email);
+        if (String.IsNullOrWhiteSpace(password))
+            throw new ArgumentException("Password cannot be empty");
+        
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(password, 12);
+        
+        return new User(name, email, passwordHash);
     }
     
     private User () {}
     
-    // Regydrate from database
+    /// <summary>
+    /// Rehydrate from database to domain
+    /// </summary>
+    /// <returns></returns>
     public static User Rehydrate(Guid id, string name, string email)
     {
         return new User
