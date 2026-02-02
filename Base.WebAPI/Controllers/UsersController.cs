@@ -1,4 +1,7 @@
 using Base.Application.Contexts.Users.Commands;
+using Base.Domain.Common;
+using Base.WebAPI.Models;
+using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +17,8 @@ public class UsersController(ISender sender) : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand command, CancellationToken cancellationToken)
     {
-        var id = await sender.Send(command, cancellationToken);
-        return Ok(id);
+        var idResult = await sender.Send(command, cancellationToken);
+
+        return idResult.IsSuccess ? Ok(ApiResponse<Guid>.Ok(idResult.Value)) : Ok(ApiResponse<ErrorCode>.Failure(idResult.Error));
     }
 }

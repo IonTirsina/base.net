@@ -8,6 +8,7 @@ public static class DependencyInjection
     {
         services.AddMediatR(cfg =>
         {
+            cfg.LicenseKey = ""; // TODO : register
             cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
         });
     }

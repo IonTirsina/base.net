@@ -3,7 +3,6 @@
 - [ ] Validations + Railway + Custom Exceptions
 - [ ] Functional extensions 
 - [ ] Create Exceptions and exception middleware to return exceptions as JSON bodies instead of relying on HTTP codes
-- [ ] Install functional extensions
 - [ ] Move the database to cloud
 - [ ] Key Vault / CI/CD key injection in docker compose
 - [ ] Base entity model

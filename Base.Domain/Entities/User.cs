@@ -1,4 +1,6 @@
-﻿using Base.Domain.ValueObjects;
+﻿using Base.Domain.Common;
+using Base.Domain.ValueObjects;
+using CSharpFunctionalExtensions;
 
 namespace Base.Domain.Entities;
 
@@ -17,21 +19,20 @@ public class User
         PasswordHash = passwordHash;
     }
 
-    public static User Create(
+    public static Result<User, ErrorCode> Create(
         string name,
         Email email,
         string password)
     {
-        if (String.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("User name cannot be empty");
-
-        if (Email.IsValid(email.Value) is false)
-        {
-            throw new ArgumentException("Invalid user email");
-        }
-        
-        if (String.IsNullOrWhiteSpace(password))
-            throw new ArgumentException("Password cannot be empty");
+        // TODO : move to validator
+        // if (String.IsNullOrWhiteSpace(name))
+        //     return Result.Failure<User>("User name cannot be empty");
+        //
+        // if (Email.IsValid(email.Value) is false)
+        //     return Result.Failure<User>("Invalid user email");
+        //
+        // if (String.IsNullOrWhiteSpace(password))
+        //     return Result.Failure<User>("Password cannot be empty");
         
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(password, 12);
         

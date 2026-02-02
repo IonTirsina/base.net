@@ -1,6 +1,7 @@
 ﻿using Base.Application.Repositories;
 using Base.Application.Repositories.Users;
 using Base.Domain.Entities;
+using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Base.DataAccess.Contexts.Users;
@@ -35,10 +36,17 @@ public class UserWriteRepository(BaseDbContext dbContext) : IUserWriteRepository
     /// <summary>
     /// "Why here?" you may ask. Reads used for decision-making belong to write side
     /// </summary>
-    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Maybe<User>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         
+        return user?.ToDomain();
+    }
+
+    public async Task<Maybe<User>> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+
         return user?.ToDomain();
     }
 
