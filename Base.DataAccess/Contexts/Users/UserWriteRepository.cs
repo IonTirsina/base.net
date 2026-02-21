@@ -33,19 +33,22 @@ namespace Base.DataAccess.Contexts.Users;
 /// </remarks>
 public class UserWriteRepository(BaseDbContext dbContext) : IUserWriteRepository
 {
+    // All queries go through here — includes are defined once
+    private IQueryable<UserPersistence> BaseQuery() => dbContext.Users.Include(u => u.Identity);
+    
     /// <summary>
     /// "Why here?" you may ask. Reads used for decision-making belong to write side
     /// </summary>
     public async Task<Maybe<User>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        var user = await BaseQuery().FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         
         return user?.ToDomain();
     }
 
     public async Task<Maybe<User>> GetByEmailAsync(string email, CancellationToken cancellationToken)
     {
-        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+        var user = await BaseQuery().FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
         return user?.ToDomain();
     }

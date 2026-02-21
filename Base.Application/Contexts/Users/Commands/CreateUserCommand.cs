@@ -7,36 +7,34 @@ using MediatR;
 
 namespace Base.Application.Contexts.Users.Commands;
 
-public record CreateUserCommand(string Name, string Email, string Password, string PasswordConfirmation) : IRequest<IResult<Guid, ErrorCode>>;
+public record CreateUserCommand(string Name, string Email, string Password, string PasswordConfirmation)
+    : IRequest<Result<Guid, ErrorCode>>;
 
-public class CreateUserCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<CreateUserCommand, IResult<Guid, ErrorCode>>
+public class CreateUserCommandHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<CreateUserCommand, Result<Guid, ErrorCode>>
 {
-    public async Task<IResult<Guid, ErrorCode>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid, ErrorCode>> Handle(CreateUserCommand request, CancellationToken ct)
     {
-        if (request.Password != request.PasswordConfirmation)
-            return Result.Failure<Guid, ErrorCode>(ErrorCode.PasswordNotMatch);
-
-        var existingUser = await unitOfWork.UserWriteRepository.GetByEmailAsync(request.Email, cancellationToken);
-
-        if (existingUser.HasValue)
-            return Result.Failure<Guid, ErrorCode>(ErrorCode.UserEmailTaken);
-        
-        var userResult = User.Create(
-            name: request.Name,
-            email: Email.Create(request.Email),
-            password: request.Password
-        );
-
-        if (!userResult.IsSuccess)
-        {
-            return Result.Failure<Guid, ErrorCode>(userResult.Error);
-        }
-
-        var user = userResult.Value;
-        await unitOfWork.UserWriteRepository.AddAsync(userResult.Value, cancellationToken);
-        
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success<Guid, ErrorCode>(user.Id);
+        return await Result.Success<string, ErrorCode>(request.Email)
+            .Ensure(_ => request.Password == request.PasswordConfirmation,
+                ErrorCode.PasswordNotMatch)
+            .Bind(Email.Create)
+            .Bind(async email =>
+            {
+                var existing = await unitOfWork.UserWriteRepository.GetByEmailAsync(email.Value, ct);
+                return existing.HasValue
+                    ? Result.Failure<Email, ErrorCode>(ErrorCode.UserEmailTaken)
+                    : Result.Success<Email, ErrorCode>(email);
+            })
+            .Bind(email =>
+                UserIdentity.CreateFromAuth0("Test_123")
+                    .Map(identity => (email, identity)))
+            .Bind(t => User.Create(request.Name, t.email, t.identity))
+            .Tap(async user =>
+            {
+                await unitOfWork.UserWriteRepository.AddAsync(user, ct);
+                await unitOfWork.SaveChangesAsync(ct);
+            })
+            .Map(user => user.Id);
     }
 }

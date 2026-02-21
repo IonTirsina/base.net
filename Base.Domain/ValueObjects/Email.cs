@@ -1,4 +1,7 @@
-﻿namespace Base.Domain.ValueObjects;
+﻿using Base.Domain.Common;
+using CSharpFunctionalExtensions;
+
+namespace Base.Domain.ValueObjects;
 
 public sealed record Email
 {
@@ -6,15 +9,12 @@ public sealed record Email
     
     private Email (string value) => Value = value;
 
-    public static Email Create(string value)
+    public static Result<Email, ErrorCode> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Email cannot be empty");
-        
-        if (!IsValid(value))
-            throw new ArgumentException("Email is not valid");
+        if (string.IsNullOrWhiteSpace(value) || !IsValid(value))
+            return Result.Failure<Email, ErrorCode>(ErrorCode.InvalidEmail);
 
-        return new Email(value);
+        return Result.Success<Email, ErrorCode>(new Email(value));
     }
 
     public static bool IsValid(string value)
@@ -32,4 +32,8 @@ public sealed record Email
     }
     
     public override string ToString() => Value;
+    
+    // private factory for trusted/already-validated data
+    internal static Email FromTrustedSource(string value) => new Email(value);
+
 }

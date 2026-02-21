@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:5247
+
+### Create user - success
+POST {{baseUrl}}/Users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "Password123!",
+  "passwordConfirmation": "Password123!"
+}
+
+### Create user - password mismatch
+POST {{baseUrl}}/Users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "Password123!",
+  "passwordConfirmation": "WrongPassword!"
+}
+
+### Create user - duplicate email
+POST {{baseUrl}}/Users
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "john.doe@example.com",
+  "password": "Password123!",
+  "passwordConfirmation": "Password123!"
+}

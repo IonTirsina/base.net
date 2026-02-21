@@ -6,37 +6,28 @@ namespace Base.Domain.Entities;
 
 public class User
 {
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; private set; } = Guid.CreateVersion7();
 
     public string Name { get; private set; }
     public Email Email { get; private set; }
-    public string PasswordHash { get; private set; }
     
-    private User(string name, Email email,  string passwordHash)
+    public UserIdentity Identity { get; private set; }
+    
+    private User(string name, Email email, UserIdentity identity)
     {
         Name = name;
         Email = email;
-        PasswordHash = passwordHash;
+        Identity = identity;
     }
 
     public static Result<User, ErrorCode> Create(
         string name,
         Email email,
-        string password)
+        UserIdentity identity
+        )
     {
-        // TODO : move to validator
-        // if (String.IsNullOrWhiteSpace(name))
-        //     return Result.Failure<User>("User name cannot be empty");
-        //
-        // if (Email.IsValid(email.Value) is false)
-        //     return Result.Failure<User>("Invalid user email");
-        //
-        // if (String.IsNullOrWhiteSpace(password))
-        //     return Result.Failure<User>("Password cannot be empty");
         
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(password, 12);
-        
-        return new User(name, email, passwordHash);
+        return new User(name, email, identity);
     }
     
     private User () {}
@@ -45,14 +36,14 @@ public class User
     /// Rehydrate from database to domain
     /// </summary>
     /// <returns></returns>
-    public static User Rehydrate(Guid id, string name, string email, string passwordHash)
+    public static User Rehydrate(Guid id, string name, string email, UserIdentity identity)
     {
         return new User
         {
             Id = id,
             Name = name,
-            Email = Email.Create(email),
-            PasswordHash =  passwordHash
+            Email = Email.FromTrustedSource(email),
+            Identity = identity
         };
     }
 }

@@ -7,3 +7,4 @@
 - [ ] Key Vault / CI/CD key injection in docker compose
 - [ ] Base entity model
 - [ ] IaC
+- [ ] OpenAPI + NSwag

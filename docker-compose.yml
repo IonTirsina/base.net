@@ -7,7 +7,7 @@ services:
             POSTGRES_PASSWORD: base-net-admin-user-password
             POSTGRES_DB: base-net-postgres-db
         ports:
-            - "5432:5432"
+            - "5433:5432"
         volumes:
             - postgres_data:/var/lib/postgresql #specific for postgres 18
     
