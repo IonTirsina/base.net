@@ -1,15 +1,15 @@
+# =============================================================================
+# .NET
+# =============================================================================
+
+# Build outputs
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
 
 # Rider
+riderModule.iml
+/_ReSharper.Caches/
 .idea/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
 DocumentLayout.json
 
 # Visual Studio
@@ -19,6 +19,28 @@ DocumentLayout.json
 *.userosscache
 *.sln.docstates
 
-# Build outputs
-bin/
-obj/
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+nuget.config.local
+
+# dotnet tools
+.dotnet/
+
+# =============================================================================
+# General
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Certificates
+*.pem
+
+# Editor directories
+.vscode/
+*.swp
+*.swo
